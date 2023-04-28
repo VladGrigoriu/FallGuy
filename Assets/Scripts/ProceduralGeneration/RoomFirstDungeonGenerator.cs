@@ -17,9 +17,18 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
     [SerializeField]
     private bool randomWalkRooms = false;
 
+    [SerializeField]
+    public GameObject player, canvas;
+
     protected override void RunProceduralGeneration()
     {
         CreateRooms();
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        RunProceduralGeneration();
     }
 
     private void CreateRooms()
@@ -35,8 +44,11 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
             roomCenters.Add((Vector2Int)Vector3Int.RoundToInt(room.center));
         }
 
+        SpawnPlayer(roomCenters[0]);
+
         HashSet<Vector2Int> corridors = ConnectRooms(roomCenters);
-        floor.UnionWith(corridors);
+        HashSet<Vector2Int> newCorridors = IncreaseCorridorSize(corridors);
+        floor.UnionWith(newCorridors);
 
         tilemapVisualizer.PaintFloorTiles(floor);
         WallGenerator.CreateWalls(floor, tilemapVisualizer);
@@ -126,6 +138,30 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
         }
 
         return corridor;
+
+    }
+
+    private void SpawnPlayer(Vector2Int roomCenter)
+    {
+        player.transform.position = new Vector3(roomCenter.x, roomCenter.y, 0);
+        // Instantiate(player, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
+        // Instantiate(canvas, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
+    }
+
+    private HashSet<Vector2Int> IncreaseCorridorSize(HashSet<Vector2Int> corridors){
+
+        HashSet<Vector2Int> newCorridors = new HashSet<Vector2Int>();
+        foreach (var corridor in corridors)
+        {
+            for (int x = -1; x < 3; x++)
+            {
+                for (int y = -1; y < 3; y++)
+                {
+                    newCorridors.Add(corridor + new Vector2Int(x, y));
+                }
+            }
+        }
+        return newCorridors;
 
     }
 
