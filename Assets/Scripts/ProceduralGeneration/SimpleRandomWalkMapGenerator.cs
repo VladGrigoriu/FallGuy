@@ -18,13 +18,13 @@ public class SimpleRandomWalkMapGenerator : AbstractDungeonGenerator
 
     protected override void RunProceduralGeneration()
     {
-        HashSet<Vector2Int> floorPositions = RunRandomWalk(iterations, walkLength, startRandomlyEachIteration);
+        HashSet<Vector2Int> floorPositions = RunRandomWalk(iterations, walkLength, startRandomlyEachIteration, startPosition);
         tilemapVisualizer.Clear();
         tilemapVisualizer.PaintFloorTiles(floorPositions);
         WallGenerator.CreateWalls(floorPositions, tilemapVisualizer);
     }
 
-    protected HashSet<Vector2Int> RunRandomWalk(int iterationsNumber, int walkerLength, bool startRandom)
+    protected HashSet<Vector2Int> RunRandomWalk(int iterationsNumber, int walkerLength, bool startRandom, Vector2Int startPosition)
     {
         var currentPosition = startPosition;
         HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
