@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private FixedJoystick joystick;
 
     [SerializeField] private float movementSpeed;
+    [SerializeField] private float rotationSpeed;
     
     void Start()
     {

@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
+
 
 public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
 {
@@ -18,7 +21,22 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
     private bool randomWalkRooms = false;
 
     [SerializeField]
-    public GameObject player, canvas;
+    public GameObject player;
+
+    [SerializeField]
+    public List<GameObject> propsToPlace;
+
+    [SerializeField]
+    public List<GameObject> enemiesToPlace;
+
+    private Dictionary<Vector2Int, HashSet<Vector2Int>> roomsDictionary = new Dictionary <Vector2Int, HashSet<Vector2Int>>();
+    private HashSet<Vector2Int> floorPositions, corridorPositions;
+
+    private List<Color> roomColors = new List<Color>();
+
+    [SerializeField]
+    private bool showRoomGizmo = false, showCorridorsGizmo;
+
 
     protected override void RunProceduralGeneration()
     {
@@ -36,7 +54,9 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
         var roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning(new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeonWidth, dungeonHeight, 0)), minRoomWidth, minRoomHeight);
 
         HashSet<Vector2Int> floor = new HashSet<Vector2Int>();
+        HashSet<Vector2Int> floorToFill = new HashSet<Vector2Int>();
         floor = CreateSimpleRooms(roomsList);
+        floorToFill = floor;
 
         List<Vector2Int> roomCenters = new List<Vector2Int>();
         foreach (var room in roomsList)
@@ -44,7 +64,14 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
             roomCenters.Add((Vector2Int)Vector3Int.RoundToInt(room.center));
         }
 
-        SpawnPlayer(roomCenters[0]);
+
+        System.Random rand = new System.Random();
+        
+        var spawnRoom = roomsDictionary.First();
+        var bossRoom = roomsDictionary.Last();
+        var treasureRoom = roomsDictionary.ElementAt(rand.Next(1, roomsDictionary.Count-1));
+        var playerSpawnRoom = SpawnPlayer(spawnRoom.Key);
+        
 
         HashSet<Vector2Int> corridors = ConnectRooms(roomCenters);
         HashSet<Vector2Int> newCorridors = IncreaseCorridorSize(corridors);
@@ -52,6 +79,24 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
 
         tilemapVisualizer.PaintFloorTiles(floor);
         WallGenerator.CreateWalls(floor, tilemapVisualizer);
+        foreach(var key in roomsDictionary.Keys)
+        {
+            if(key == spawnRoom.Key || key == bossRoom.Key) {
+
+                foreach (var value in roomsDictionary[key])
+                {
+                    floorToFill.Remove(value);
+                }
+            }
+        }
+        
+        foreach (var corridor in newCorridors)
+        {
+            floorToFill.Remove(corridor);
+        }
+
+        ItemPlacementHelper placementHelper = new ItemPlacementHelper();
+        placementHelper.ItemPlacementHelperMethod(floor, floorToFill, propsToPlace, spawnRoom.Value, roomsList, bossRoom.Value, treasureRoom.Value, enemiesToPlace);
     }
 
     private HashSet<Vector2Int> CreateSimpleRooms(List<BoundsInt> roomsList)
@@ -60,14 +105,21 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
 
         foreach (var room in roomsList)
         {
+            HashSet<Vector2Int> singleFloor = new HashSet<Vector2Int>();
+            Vector2Int roomPosition = (Vector2Int)Vector3Int.RoundToInt(room.center);
+
             for (int col = offset; col < room.size.x - offset; col++)
             {
                 for (int row = offset; row < room.size.y - offset; row++)
                 {
                     Vector2Int position = (Vector2Int)room.min + new Vector2Int(col, row);
-                    floor.Add(position);
+                    floor.Add(position); 
+                    singleFloor.Add(position);
                 }
             }
+            roomsDictionary[roomPosition] = singleFloor;
+            roomColors.Add(UnityEngine.Random.ColorHSV());
+            // singleFloor.Clear();
         }
         return floor;
     }
@@ -87,6 +139,7 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
             currentRoomCenter = closest;
             corridors.UnionWith(newCorridor);
         }
+        corridorPositions = new HashSet<Vector2Int>(corridors);
         return corridors;
     }
 
@@ -141,11 +194,12 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
 
     }
 
-    private void SpawnPlayer(Vector2Int roomCenter)
+    private Vector2Int SpawnPlayer(Vector2Int roomPosition)
     {
-        player.transform.position = new Vector3(roomCenter.x, roomCenter.y, 0);
+        player.transform.position = new Vector3(roomPosition.x, roomPosition.y, 0);
         // Instantiate(player, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
         // Instantiate(canvas, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
+        return roomPosition;
     }
 
     private HashSet<Vector2Int> IncreaseCorridorSize(HashSet<Vector2Int> corridors){
