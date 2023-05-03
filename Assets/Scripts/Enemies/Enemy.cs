@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, ITarget
 {
     
-    [SerializeField] float health, maxHealth = 50;
+    [SerializeField] int currentHealth, maxHealth = 50;
 
     [SerializeField] float moveSpeed = 5f;
     Rigidbody2D rigidBody;
@@ -32,6 +32,8 @@ public class Enemy : MonoBehaviour
 
     public bool TargetVisible { get; private set; }
 
+    public GameObject hearth;
+
 
     public Transform Target
     {
@@ -44,6 +46,7 @@ public class Enemy : MonoBehaviour
     }
 
     public PlayerHealth playerHealth;
+    public CameraShake cameraShake;
 
     private void Awake() 
     {
@@ -53,9 +56,20 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-        health = maxHealth;
+        currentHealth = maxHealth;
         // target = GameObject.Find("Player").transform;
         StartCoroutine(DetectionCoroutine());
+    }
+
+    public GameObject PlayerTarget()
+    {
+        Debug.Log("here");
+        return this.gameObject;
+    }
+
+    public GameObject UnTarget()
+    {
+        return this.gameObject;
     }
 
     private void Update()
@@ -127,17 +141,35 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, viewRadius);
-    }
+    // private void OnDrawGizmos()
+    // {
+    //     Gizmos.color = Color.blue;
+    //     Gizmos.DrawWireSphere(transform.position, viewRadius);
+    // }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.tag == "Player")
         {
-            playerHealth.TakeDamage(5);
+            cameraShake.ShakeCamera(3f, 0.2f);
+            playerHealth.TakeDamage(20);
+        }
+    }
+
+    public void TakeDamage(int amount)
+    {
+        currentHealth -= amount;
+
+        if(currentHealth <= 0)
+        {
+            //DEAD
+            //Play dead animation 
+            Destroy(this.gameObject);
+            System.Random rand = new System.Random();
+            if(rand.Next(100) < 1)
+            {
+                Instantiate(hearth, transform.position, Quaternion.identity);
+            }
         }
     }
 

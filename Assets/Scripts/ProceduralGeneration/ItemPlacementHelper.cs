@@ -55,7 +55,7 @@ public class ItemPlacementHelper : MonoBehaviour
     public void PlaceEnemies(PlacementType placementType, Vector2Int floorPosition, List<GameObject> enemiesToPlace)
     {
         System.Random rand = new System.Random();
-        if(rand.Next(100) < 1)
+        if(rand.Next(100) < 4)
         {
             int index = rand.Next(enemiesToPlace.Count);
             Instantiate(enemiesToPlace[index], new Vector3(floorPosition.x, floorPosition.y, 0), Quaternion.identity);

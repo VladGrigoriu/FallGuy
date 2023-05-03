@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Coin
+  - Wall
+  - Enemy
+  - Bullet
+  - Chest
   layers:
   - Default
   - TransparentFX
@@ -14,8 +18,8 @@ TagManager:
   - UI
   - Player
   - Enemy
-  - 
-  - 
+  - MinimapOnly
+  - MinimapMixed
   - 
   - 
   - 
