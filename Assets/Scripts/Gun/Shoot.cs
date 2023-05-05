@@ -5,7 +5,7 @@ using UnityEngine;
 public class Shoot : MonoBehaviour
 {
     float timer = 0f;
-    float waitingTime = 0.5f;
+    public float waitingTime = 0.5f;
     public Transform shootingPoint;
     public GameObject bullet;
     public GameObject player;
@@ -26,7 +26,7 @@ public class Shoot : MonoBehaviour
         FindInArea();
         Quaternion rotationAmount = Quaternion.Euler(0, 0, 90);
         timer += Time.deltaTime;
-        if(enemyToShoot != null && CheckTargetVisible())
+        if(enemyToShoot != null && CheckTargetVisible() && Vector3.Distance(enemyToShoot.transform.position, shootingPoint.position) < searchRadius)
         {
             if(timer > waitingTime){
                 Vector2 direction = enemyToShoot.transform.position - shootingPoint.position;
@@ -42,6 +42,7 @@ public class Shoot : MonoBehaviour
         }
         else
         {
+            enemyToShoot = null;
             if(timer > waitingTime)
             {
                 Instantiate(bullet, shootingPoint.position, shootingPoint.rotation);
@@ -49,6 +50,16 @@ public class Shoot : MonoBehaviour
             }
         }
 
+    }
+
+    public float GetWaitingTime()
+    {
+        return waitingTime;
+    }
+
+    public void SetWaitingTime(float newWaitingTime)
+    {
+        waitingTime = newWaitingTime;
     }
 
     private bool CheckTargetVisible()
@@ -59,6 +70,7 @@ public class Shoot : MonoBehaviour
         {
             return (playerLayerMask & (1 << result.collider.gameObject.layer)) != 0;
         }
+        enemyToShoot=null;
         return false;
     }
 
@@ -68,7 +80,7 @@ public class Shoot : MonoBehaviour
         Collider2D[] hitColliders = new Collider2D[maxColliders];
         int numColliders = Physics2D.OverlapCircleNonAlloc(player.transform.position, searchRadius, hitColliders);
         float closestDistance = Mathf.Infinity;
-
+     
         for (int i = 0; i < numColliders; i++)
         {
             ITarget target;
@@ -90,6 +102,7 @@ public class Shoot : MonoBehaviour
                 }
             }
         }
+
     }
 
     private void OnDrawGizmos()

@@ -14,6 +14,7 @@ public class Chest : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+        // coin = GameObject.FindGameObjectWithTag("Coin");
     }
 
 

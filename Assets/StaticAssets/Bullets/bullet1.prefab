@@ -153,8 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0e3bc19d9a84b346a8879e78099cad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  speed: 7
   hitParticles: {fileID: 2205304597302907286, guid: 01c5a131e53d3134f8b6b10e52c3d53f, type: 3}
   enemy: {fileID: 0}
   hasTarget: 1
   target: {x: 138.64381, y: 143.022}
+  damage: 20

@@ -4,14 +4,29 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Linq;
 
+[System.Serializable]
+public class Floor 
+{
+    public TileBase floorTile;
+    [Range(0f, 100f)] public float chance = 100f;
+    [HideInInspector] public double _weight;
+}
+
+
 public class TilemapVisualizer : MonoBehaviour
 {
     [SerializeField]
     private Tilemap floorTilemap, wallTilemap;
 
     [SerializeField]
-    private TileBase floorTile,
-    wallTop,
+    private Floor[] floors;
+
+    private double accumulatedWeights;
+    private System.Random rand = new System.Random();
+
+
+    [SerializeField]
+    private TileBase wallTop,
     wallSideRight,
     wallSideLeft, 
     wallBottom, 
@@ -23,9 +38,38 @@ public class TilemapVisualizer : MonoBehaviour
     wallDiagonalCornerUpRight, 
     wallDiagonalCornerUpLeft; //in future make an array and select random element to get a random floor and use it accordingly with walls tile
 
+    private void Awake()
+    {
+        CalculateFloorWeights();
+    }
+
+    private int GetRandomFloorIndex()
+    {
+        double r = rand.NextDouble() * accumulatedWeights;
+
+        for (int i = 0; i < floors.Length; i++)
+            if(floors[i]._weight >= r) return i;
+        return 0;
+    }
+
+    private void CalculateFloorWeights()
+    {
+        accumulatedWeights = 0f;
+        foreach (Floor floor in floors)
+        {
+            accumulatedWeights += floor.chance;
+            floor._weight = accumulatedWeights;
+        }
+    }
+
     public void PaintFloorTiles(IEnumerable<Vector2Int> floorPositions)
     {
-        PaintTiles(floorPositions, floorTilemap, floorTile);
+        // PaintTiles(floorPositions, floorTilemap, floorToPaint.floorTile);
+        foreach (var position in floorPositions)
+        {
+            Floor floorToPaint = floors[GetRandomFloorIndex()];
+            PaintSingleTile(floorTilemap, floorToPaint.floorTile, position);
+        }
     }
 
     private void PaintTiles(IEnumerable<Vector2Int> positions, Tilemap tilemap, TileBase tile) 

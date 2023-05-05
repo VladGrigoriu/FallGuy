@@ -10,6 +10,7 @@ public class Bullet : MonoBehaviour
     public GameObject enemy;
     public bool hasTarget;
     public Vector2 target;
+    public int damage;
 
     void Start()
     {
@@ -42,6 +43,7 @@ public class Bullet : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         Enemy enemy = other.GetComponent<Enemy>();
+        Boss boss = other.GetComponent<Boss>();
 
         if(other.tag == "Wall" || other.tag == "Enemy")
         {
@@ -52,12 +54,17 @@ public class Bullet : MonoBehaviour
         {
             Destroy(this.gameObject); 
             Chest chest = other.GetComponent<Chest>();
-            chest.TakeDamage(10);
+            chest.TakeDamage(damage/2);
         }
 
         if(enemy != null)
         {
-            enemy.TakeDamage(20);
+            enemy.TakeDamage(damage);
+            Instantiate(hitParticles, transform.position, transform.rotation);
+        }
+        else if(enemy == null && boss != null)
+        {
+            boss.TakeDamage(damage);
             Instantiate(hitParticles, transform.position, transform.rotation);
         }
     }

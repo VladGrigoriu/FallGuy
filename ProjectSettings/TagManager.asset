@@ -9,6 +9,13 @@ TagManager:
   - Enemy
   - Bullet
   - Chest
+  - ProceduralGen
+  - TilemapVisualizer
+  - prop
+  - Bot
+  - PetChild
+  - Camera
+  - CoinDisplayText
   layers:
   - Default
   - TransparentFX

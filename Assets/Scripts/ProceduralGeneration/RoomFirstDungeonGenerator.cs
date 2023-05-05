@@ -4,6 +4,22 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
+[System.Serializable]
+public class PropObject
+{
+    public GameObject prop;
+    [Range(0f, 100f)] public float chance = 100f;
+    [HideInInspector] public double _weight;
+}
+
+[System.Serializable]
+public class Perk
+{
+    public GameObject perk;
+    [Range(0f, 100f)] public float chance = 100f;
+    [HideInInspector] public double _weight;
+}
+
 
 public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
 {
@@ -24,10 +40,16 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
     public GameObject player;
 
     [SerializeField]
-    public List<GameObject> propsToPlace;
+    public PropObject[] propsToPlace;
 
     [SerializeField]
     public List<GameObject> enemiesToPlace;
+
+    [SerializeField]
+    public Perk[] perksToPlace;
+
+    [SerializeField]
+    public GameObject boss;
 
     private Dictionary<Vector2Int, HashSet<Vector2Int>> roomsDictionary = new Dictionary <Vector2Int, HashSet<Vector2Int>>();
     private HashSet<Vector2Int> floorPositions, corridorPositions;
@@ -37,6 +59,20 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
     [SerializeField]
     private bool showRoomGizmo = false, showCorridorsGizmo;
 
+    // private void Awake()
+    // {
+    //     CalculatePropsWeights();
+    // }
+
+    // private void CalculatePropsWeights()
+    // {
+    //     accumulatedWeights = 0f;
+    //     foreach (Prop prop in props)
+    //     {
+    //         accumulatedWeights += floor.chance;
+    //         floor._weight = accumulatedWeights;
+    //     }
+    // }
 
     protected override void RunProceduralGeneration()
     {
@@ -49,7 +85,14 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
         RunProceduralGeneration();
     }
 
-    private void CreateRooms()
+    public void ClearAll()
+    {
+        roomsDictionary = new Dictionary <Vector2Int, HashSet<Vector2Int>>();
+        floorPositions = new HashSet<Vector2Int>();
+        corridorPositions = new HashSet<Vector2Int>();
+    }
+
+    public void CreateRooms()
     {
         var roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning(new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeonWidth, dungeonHeight, 0)), minRoomWidth, minRoomHeight);
 
@@ -69,7 +112,9 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
         
         var spawnRoom = roomsDictionary.First();
         var bossRoom = roomsDictionary.Last();
+        var bossRoomCenter = bossRoom.Key;
         var treasureRoom = roomsDictionary.ElementAt(rand.Next(1, roomsDictionary.Count-1));
+        var teasureRoomCenter = treasureRoom.Key;
         var playerSpawnRoom = SpawnPlayer(spawnRoom.Key);
         
 
@@ -97,6 +142,8 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
 
         ItemPlacementHelper placementHelper = new ItemPlacementHelper();
         placementHelper.ItemPlacementHelperMethod(floor, floorToFill, propsToPlace, spawnRoom.Value, roomsList, bossRoom.Value, treasureRoom.Value, enemiesToPlace);
+        placementHelper.PlaceItemsTreasureRoom(perksToPlace, teasureRoomCenter);
+        placementHelper.PlaceItemsBossRoom(boss, bossRoomCenter);
     }
 
     private HashSet<Vector2Int> CreateSimpleRooms(List<BoundsInt> roomsList)
@@ -197,8 +244,8 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
     private Vector2Int SpawnPlayer(Vector2Int roomPosition)
     {
         player.transform.position = new Vector3(roomPosition.x, roomPosition.y, 0);
-        // Instantiate(player, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
-        // Instantiate(canvas, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
+        // var bot = GameObject.FindGameObjectWithTag("Bot");
+        // Instantiate(bot, new Vector3(roomPosition.x, roomPosition.y, 0), Quaternion.identity);
         return roomPosition;
     }
 

@@ -10,6 +10,13 @@ public class Coin : MonoBehaviour
     public bool isMoving = false;
     public GameObject coinShine;
 
+    private void Start()
+    {
+        coinDisplayText = GameObject.FindGameObjectWithTag("CoinDisplayText").GetComponent<TMP_Text>();
+        target = GameObject.FindGameObjectWithTag("Player").transform;
+        
+    }
+
     private void Update()
     {
         if(isMoving)

@@ -10,15 +10,59 @@ public class ItemPlacementHelper : MonoBehaviour
 
     HashSet<Vector2Int> roomFloorNoCorridor;
 
+    private double accumulatedPropWeights;
+    private double accumulatedPerksWeights;
 
-    public void ItemPlacementHelperMethod(HashSet<Vector2Int> roomFloor, HashSet<Vector2Int> roomFloorNoCorridor, List<GameObject> propsToPlace, HashSet<Vector2Int> playerSpawnRoom, List<BoundsInt> roomsList,  HashSet<Vector2Int> bossRoom, HashSet<Vector2Int> treasureRoom, List<GameObject> enemiesToPlace)
+    private System.Random rand = new System.Random();
+
+    private void CalculatePropsWeights(PropObject[] propsToPlace)
     {
+        accumulatedPropWeights = 0f;
+        foreach (PropObject prop in propsToPlace)
+        {
+            accumulatedPropWeights += prop.chance;
+            prop._weight = accumulatedPropWeights;
+        }
+    }
+
+    private int GetRandomPropIndex(PropObject[] propsToPlace)
+    {
+        double r = rand.NextDouble() * accumulatedPropWeights;
+
+        for (int i = 0; i < propsToPlace.Length; i++)
+            if(propsToPlace[i]._weight >= r) return i;
+        return 0;
+    }
+
+    private void CalculatePerksWeights(Perk[] perksToPlace)
+    {
+        accumulatedPerksWeights = 0f;
+        foreach (Perk perk in perksToPlace)
+        {
+            accumulatedPerksWeights += perk.chance;
+            perk._weight = accumulatedPerksWeights;
+        }
+    }
+
+    private int GetRandomPerkIndex(Perk[] perksToPlace)
+    {
+        double r = rand.NextDouble() * accumulatedPerksWeights;
+
+        for (int i = 0; i < perksToPlace.Length; i++)
+            if(perksToPlace[i]._weight >= r) return i;
+        return 0;
+    }
+
+
+    public void ItemPlacementHelperMethod(HashSet<Vector2Int> roomFloor, HashSet<Vector2Int> roomFloorNoCorridor, PropObject[] propsToPlace, HashSet<Vector2Int> playerSpawnRoom, List<BoundsInt> roomsList,  HashSet<Vector2Int> bossRoom, HashSet<Vector2Int> treasureRoom, List<GameObject> enemiesToPlace)
+    {
+        CalculatePropsWeights(propsToPlace);
         Graph graph = new Graph(roomFloor);
         roomFloorNoCorridor.ExceptWith(playerSpawnRoom);
         roomFloorNoCorridor.ExceptWith(treasureRoom);
         roomFloorNoCorridor.ExceptWith(bossRoom);
         this.roomFloorNoCorridor = roomFloorNoCorridor;
-
+        
         foreach (var position in roomFloorNoCorridor)
         {
             int neighboursCount8Dir = graph.GetNeighbours8Directions(position).Count;
@@ -32,29 +76,25 @@ public class ItemPlacementHelper : MonoBehaviour
             PlaceItems(type, propsToPlace, position);
             PlaceEnemies(type, position, enemiesToPlace);
         }
-        PlaceItemsBossRoom(propsToPlace, bossRoom);
-        PlaceItemsTreasureRoom(propsToPlace, treasureRoom);
+        // PlaceItemsBossRoom(propsToPlace, bossRoom);
+        // PlaceItemsTreasureRoom(propsToPlace, treasureRoom);
 
     }
 
-    public void PlaceItems(PlacementType placementType, List<GameObject> propsToPlace, Vector2Int floorPosition)
+    public void PlaceItems(PlacementType placementType, PropObject[] propsToPlace, Vector2Int floorPosition)
     {
-        // if(playerSpawnRoom.Contains(floorPosition)) return;
-        // if(bossRoom.Contains(floorPosition)) return;
-        // if(treasureRoom.Contains(floorPosition)) return;
-        System.Random rand = new System.Random();
         if(rand.Next(100) < 10)
         {
-            int index = rand.Next(propsToPlace.Count);
-            Instantiate(propsToPlace[index], new Vector3(floorPosition.x, floorPosition.y, 0), Quaternion.identity);
+            PropObject prop = propsToPlace[GetRandomPropIndex(propsToPlace)];
+            Instantiate(prop.prop, new Vector3(floorPosition.x, floorPosition.y, 0), Quaternion.identity);
             tileByType[placementType].Remove(floorPosition);
         }
+        
 
     }
 
     public void PlaceEnemies(PlacementType placementType, Vector2Int floorPosition, List<GameObject> enemiesToPlace)
     {
-        System.Random rand = new System.Random();
         if(rand.Next(100) < 4)
         {
             int index = rand.Next(enemiesToPlace.Count);
@@ -63,55 +103,62 @@ public class ItemPlacementHelper : MonoBehaviour
         }
     }
 
-    public void  PlaceItemsBossRoom(List<GameObject> propsToPlace, HashSet<Vector2Int> bossRoom)
+    public void  PlaceItemsBossRoom(GameObject boss, Vector2Int roomCenter)
     {
-        Graph graph = new Graph(bossRoom);
-         foreach (var position in bossRoom)
-        {
-            int neighboursCount8Dir = graph.GetNeighbours8Directions(position).Count;
-            PlacementType type = neighboursCount8Dir == 1 ? PlacementType.Corner : neighboursCount8Dir < 8 ?  PlacementType.NearWall : PlacementType.OpenSpace;
+        // Graph graph = new Graph(bossRoom);
+        //  foreach (var position in bossRoom)
+        // {
+        //     int neighboursCount8Dir = graph.GetNeighbours8Directions(position).Count;
+        //     PlacementType type = neighboursCount8Dir == 1 ? PlacementType.Corner : neighboursCount8Dir < 8 ?  PlacementType.NearWall : PlacementType.OpenSpace;
 
-            if(tileByType.ContainsKey(type) == false) tileByType[type] = new HashSet<Vector2Int>();
+        //     if(tileByType.ContainsKey(type) == false) tileByType[type] = new HashSet<Vector2Int>();
 
-            if(type == PlacementType.NearWall && graph.GetNeighbours4Directions(position).Count < 4) continue;
-            tileByType[type].Add(position);
+        //     if(type == PlacementType.NearWall && graph.GetNeighbours4Directions(position).Count < 4) continue;
+        //     tileByType[type].Add(position);
             
-            // PlaceItems(type, propsToPlace, position);
-            System.Random rand = new System.Random();
-            if(rand.Next(100) < 100)
-            {
+        //     // PlaceItems(type, propsToPlace, position);
+        //     System.Random rand = new System.Random();
+        //     if(rand.Next(100) < 100)
+        //     {
                 
-                Instantiate(propsToPlace[0], new Vector3(position.x, position.y, 0), Quaternion.identity);
-                tileByType[type].Remove(position);
+        //         Instantiate(propsToPlace[0], new Vector3(position.x, position.y, 0), Quaternion.identity);
+        //         tileByType[type].Remove(position);
             
-            }
-        }
+        //     }
+        // }
+        Instantiate(boss, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
 
     }
 
-    public void  PlaceItemsTreasureRoom(List<GameObject> propsToPlace, HashSet<Vector2Int> treasureRoom)
+    public void  PlaceItemsTreasureRoom(Perk[] perksToPlace, Vector2Int roomCenter)
     {
-        Graph graph = new Graph(treasureRoom);
-         foreach (var position in treasureRoom)
-        {
-            int neighboursCount8Dir = graph.GetNeighbours8Directions(position).Count;
-            PlacementType type = neighboursCount8Dir == 1 ? PlacementType.Corner : neighboursCount8Dir < 8 ?  PlacementType.NearWall : PlacementType.OpenSpace;
+        // Graph graph = new Graph(treasureRoom);
+        //  foreach (var position in treasureRoom)
+        // {
+        //     int neighboursCount8Dir = graph.GetNeighbours8Directions(position).Count;
+        //     PlacementType type = neighboursCount8Dir == 1 ? PlacementType.Corner : neighboursCount8Dir < 8 ?  PlacementType.NearWall : PlacementType.OpenSpace;
 
-            if(tileByType.ContainsKey(type) == false) tileByType[type] = new HashSet<Vector2Int>();
+        //     if(tileByType.ContainsKey(type) == false) tileByType[type] = new HashSet<Vector2Int>();
 
-            if(type == PlacementType.NearWall && graph.GetNeighbours4Directions(position).Count < 4) continue;
-            tileByType[type].Add(position);
+        //     if(type == PlacementType.NearWall && graph.GetNeighbours4Directions(position).Count < 4) continue;
+        //     tileByType[type].Add(position);
             
-            // PlaceItems(type, propsToPlace, position);
-            System.Random rand = new System.Random();
-            if(rand.Next(100) < 100)
-            {
+        //     // PlaceItems(type, propsToPlace, position);
+        //     System.Random rand = new System.Random();
+        //     if(rand.Next(100) < 100)
+        //     {
                 
-                Instantiate(propsToPlace[4], new Vector3(position.x, position.y, 0), Quaternion.identity);
-                tileByType[type].Remove(position);
+        //         Instantiate(propsToPlace[4], new Vector3(position.x, position.y, 0), Quaternion.identity);
+        //         tileByType[type].Remove(position);
                 
-            }
-        }
+        //     }
+        // }
+
+        CalculatePerksWeights(perksToPlace);
+
+        Perk perk = perksToPlace[GetRandomPerkIndex(perksToPlace)];
+
+        Instantiate(perk.perk, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
 
     }
 

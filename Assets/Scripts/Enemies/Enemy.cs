@@ -20,6 +20,9 @@ public class Enemy : MonoBehaviour, ITarget
     private float detectionCheckDelay = 0.1f;
 
     [SerializeField]
+    private int enemyDamage;
+
+    [SerializeField]
     private LayerMask playerLayerMask;
 
     [SerializeField]
@@ -33,6 +36,8 @@ public class Enemy : MonoBehaviour, ITarget
     public bool TargetVisible { get; private set; }
 
     public GameObject hearth;
+
+    private float difficulty = 1f;
 
 
     public Transform Target
@@ -56,14 +61,19 @@ public class Enemy : MonoBehaviour, ITarget
 
     void Start()
     {
-        currentHealth = maxHealth;
+        var playerObject = GameObject.FindGameObjectWithTag("Player");
+        var player = playerObject.GetComponent<Player>();
+        playerHealth = playerObject.GetComponent<PlayerHealth>();
+        var cameraObject = GameObject.FindGameObjectWithTag("Camera");
+        cameraShake = cameraObject.GetComponent<CameraShake>();
+        difficulty = player.GetDifficultyScale();
+        currentHealth = Mathf.RoundToInt(maxHealth * difficulty);
         // target = GameObject.Find("Player").transform;
         StartCoroutine(DetectionCoroutine());
     }
 
     public GameObject PlayerTarget()
     {
-        Debug.Log("here");
         return this.gameObject;
     }
 
@@ -152,7 +162,7 @@ public class Enemy : MonoBehaviour, ITarget
         if(collision.gameObject.tag == "Player")
         {
             cameraShake.ShakeCamera(3f, 0.2f);
-            playerHealth.TakeDamage(20);
+            playerHealth.TakeDamage(Mathf.RoundToInt(enemyDamage * difficulty));
         }
     }
 
