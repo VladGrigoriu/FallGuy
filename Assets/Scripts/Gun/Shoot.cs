@@ -5,6 +5,8 @@ using UnityEngine;
 public class Shoot : MonoBehaviour
 {
     float timer = 0f;
+    float bombyTimer = 0f;
+
     public float waitingTime = 0.5f;
     public Transform shootingPoint;
     public GameObject bullet;
@@ -19,6 +21,10 @@ public class Shoot : MonoBehaviour
     [SerializeField]
     private LayerMask playerLayerMask;
 
+    public bool hasBomby = false;
+    public GameObject bomby = null;
+    public float bombyWaitingTime = 2f;
+
     
 
     void Update()
@@ -26,12 +32,13 @@ public class Shoot : MonoBehaviour
         FindInArea();
         Quaternion rotationAmount = Quaternion.Euler(0, 0, 90);
         timer += Time.deltaTime;
+        bombyTimer += Time.deltaTime;
         if(enemyToShoot != null && CheckTargetVisible() && Vector3.Distance(enemyToShoot.transform.position, shootingPoint.position) < searchRadius)
         {
+            Vector2 direction = enemyToShoot.transform.position - shootingPoint.position;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             if(timer > waitingTime){
-                Vector2 direction = enemyToShoot.transform.position - shootingPoint.position;
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
                 Instantiate(bullet, shootingPoint.position, rotation);
                 var bulletScript = bullet.GetComponent<Bullet>();
@@ -39,15 +46,24 @@ public class Shoot : MonoBehaviour
                 
                 timer = 0;
             }
+
+            if(hasBomby)
+            {
+                if(bombyTimer > bombyWaitingTime)
+                {
+                    Instantiate(bomby, shootingPoint.position, Quaternion.identity);
+                    bombyTimer = 0;
+                }
+            }
         }
         else
         {
             enemyToShoot = null;
-            if(timer > waitingTime)
-            {
-                Instantiate(bullet, shootingPoint.position, shootingPoint.rotation);
-                timer = 0;
-            }
+            // if(timer > waitingTime)
+            // {
+            //     Instantiate(bullet, shootingPoint.position, shootingPoint.rotation);
+            //     timer = 0;
+            // }
         }
 
     }

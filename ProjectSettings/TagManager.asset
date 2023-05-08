@@ -16,6 +16,11 @@ TagManager:
   - PetChild
   - Camera
   - CoinDisplayText
+  - SkullIcon
+  - ChestIcon
+  - FloorDisplayText
+  - Campfire
+  - PostProcessing
   layers:
   - Default
   - TransparentFX

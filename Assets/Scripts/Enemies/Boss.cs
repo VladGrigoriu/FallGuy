@@ -89,8 +89,8 @@ public class Boss : MonoBehaviour, ITarget
         if(Target != null && TargetVisible == true)
         {
             Vector3 direction = (Target.position - transform.position).normalized;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            rigidBody.rotation = angle;
+            // float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            // rigidBody.rotation = angle;
             moveDirection = direction;
         }
     }

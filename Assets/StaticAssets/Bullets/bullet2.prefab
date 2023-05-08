@@ -170,4 +170,4 @@ MonoBehaviour:
   enemy: {fileID: 0}
   hasTarget: 0
   target: {x: 0, y: 0}
-  damage: 5
+  damage: 1

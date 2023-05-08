@@ -83,7 +83,7 @@ public class ItemPlacementHelper : MonoBehaviour
 
     public void PlaceItems(PlacementType placementType, PropObject[] propsToPlace, Vector2Int floorPosition)
     {
-        if(rand.Next(100) < 10)
+        if(rand.Next(100) < 20)
         {
             PropObject prop = propsToPlace[GetRandomPropIndex(propsToPlace)];
             Instantiate(prop.prop, new Vector3(floorPosition.x, floorPosition.y, 0), Quaternion.identity);
@@ -103,7 +103,7 @@ public class ItemPlacementHelper : MonoBehaviour
         }
     }
 
-    public void  PlaceItemsBossRoom(GameObject boss, Vector2Int roomCenter)
+    public void  PlaceItemsBossRoom(GameObject boss, Vector2Int roomCenter, GameObject skullIcon)
     {
         // Graph graph = new Graph(bossRoom);
         //  foreach (var position in bossRoom)
@@ -127,10 +127,11 @@ public class ItemPlacementHelper : MonoBehaviour
         //     }
         // }
         Instantiate(boss, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
+        Instantiate(skullIcon, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
 
     }
 
-    public void  PlaceItemsTreasureRoom(Perk[] perksToPlace, Vector2Int roomCenter)
+    public void  PlaceItemsTreasureRoom(Perk[] perksToPlace, Vector2Int roomCenter, GameObject chestIcon)
     {
         // Graph graph = new Graph(treasureRoom);
         //  foreach (var position in treasureRoom)
@@ -159,6 +160,7 @@ public class ItemPlacementHelper : MonoBehaviour
         Perk perk = perksToPlace[GetRandomPerkIndex(perksToPlace)];
 
         Instantiate(perk.perk, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
+        Instantiate(chestIcon, new Vector3(roomCenter.x, roomCenter.y, 0), Quaternion.identity);
 
     }
 

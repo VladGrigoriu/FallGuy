@@ -19,7 +19,7 @@ public class TilemapVisualizer : MonoBehaviour
     private Tilemap floorTilemap, wallTilemap;
 
     [SerializeField]
-    private Floor[] floors;
+    public Floor[] floors;
 
     private double accumulatedWeights;
     private System.Random rand = new System.Random();

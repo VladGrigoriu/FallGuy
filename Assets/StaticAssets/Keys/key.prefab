@@ -124,3 +124,125 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 877f01631952eb246ab4d5c2c6f0eafa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  floorDisplayText: {fileID: 0}
+  mapShuffles:
+  - floors:
+    - floorTile: {fileID: 11400000, guid: 0a5f325f26f07c240961efe27943d1e9, type: 2}
+      chance: 98
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: 715bfacfc3b40ef45b4e070601fdfe72, type: 2}
+      chance: 1
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: dfcd668896db455418c79890f93c1897, type: 2}
+      chance: 0.5
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: 3cb3e96199c27ef43a747657d0d94d63, type: 2}
+      chance: 0.5
+      _weight: 0
+    enemiesToPlace:
+    - {fileID: 1540112641782653953, guid: 7f54db9f3fef2c44e859a49dc40fbf14, type: 3}
+    propsToPlace:
+    - prop: {fileID: 2677459748315540916, guid: 54507ee0dae89aa4b925cede67920022, type: 3}
+      chance: 50
+      _weight: 0
+    - prop: {fileID: 1923988106458064123, guid: e3c8c5d8ade572b4ab9eb186f5ac87a6, type: 3}
+      chance: 20
+      _weight: 0
+    - prop: {fileID: 6963080786396987456, guid: fc4479dfd2ab1a746a35adadb41dbb4f, type: 3}
+      chance: 20
+      _weight: 0
+    - prop: {fileID: 7352246353587325366, guid: bc1dc8c34f000f94cac91fc484278b41, type: 3}
+      chance: 10
+      _weight: 0
+    chance: 20
+    _weight: 0
+  - floors:
+    - floorTile: {fileID: 11400000, guid: 3a4adf62e8c62ac4998c4e9917f315bf, type: 2}
+      chance: 98
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: 85a94108a9b6797468d35ad9acc5234b, type: 2}
+      chance: 1
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: 812842fa46c4f034da47dca19fe4f468, type: 2}
+      chance: 0.5
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: e1ac25207ecfe874e9062a2bc2f8fb52, type: 2}
+      chance: 0.5
+      _weight: 0
+    enemiesToPlace:
+    - {fileID: 1540112641782653953, guid: 7f54db9f3fef2c44e859a49dc40fbf14, type: 3}
+    propsToPlace:
+    - prop: {fileID: 3190685943038873092, guid: 7db899c91ead9be4b9bda8fac35c5507, type: 3}
+      chance: 20
+      _weight: 0
+    - prop: {fileID: 6005094630611280481, guid: 231982942831abc4dac236577bf86e28, type: 3}
+      chance: 50
+      _weight: 0
+    - prop: {fileID: 6263395148868319993, guid: 5f7f0f2212a0efa4b8d7aa75e9d7d17c, type: 3}
+      chance: 20
+      _weight: 0
+    - prop: {fileID: 3312666857831464757, guid: b75319e078279f14fa2b53237be7cf23, type: 3}
+      chance: 10
+      _weight: 0
+    chance: 20
+    _weight: 0
+  - floors:
+    - floorTile: {fileID: 11400000, guid: 75e0252525470a24b907a89c38f3d358, type: 2}
+      chance: 98
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: 883f378841bf9054fa207ff3d9eff798, type: 2}
+      chance: 1
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: 883f378841bf9054fa207ff3d9eff798, type: 2}
+      chance: 0.5
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: 883f378841bf9054fa207ff3d9eff798, type: 2}
+      chance: 0.5
+      _weight: 0
+    enemiesToPlace:
+    - {fileID: 1540112641782653953, guid: 7f54db9f3fef2c44e859a49dc40fbf14, type: 3}
+    propsToPlace:
+    - prop: {fileID: 2677459748315540916, guid: 54507ee0dae89aa4b925cede67920022, type: 3}
+      chance: 50
+      _weight: 0
+    - prop: {fileID: 1923988106458064123, guid: e3c8c5d8ade572b4ab9eb186f5ac87a6, type: 3}
+      chance: 20
+      _weight: 0
+    - prop: {fileID: 6963080786396987456, guid: fc4479dfd2ab1a746a35adadb41dbb4f, type: 3}
+      chance: 20
+      _weight: 0
+    - prop: {fileID: 7352246353587325366, guid: bc1dc8c34f000f94cac91fc484278b41, type: 3}
+      chance: 10
+      _weight: 0
+    chance: 20
+    _weight: 0
+  - floors:
+    - floorTile: {fileID: 11400000, guid: 0ab5511ae770ba749bbac97654ca7dc7, type: 2}
+      chance: 98
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: 4c0b3c6788e05f24187e398f676e7973, type: 2}
+      chance: 1
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: 4c0b3c6788e05f24187e398f676e7973, type: 2}
+      chance: 0.5
+      _weight: 0
+    - floorTile: {fileID: 11400000, guid: 4c0b3c6788e05f24187e398f676e7973, type: 2}
+      chance: 0.5
+      _weight: 0
+    enemiesToPlace:
+    - {fileID: 1540112641782653953, guid: 7f54db9f3fef2c44e859a49dc40fbf14, type: 3}
+    propsToPlace:
+    - prop: {fileID: 3599055147559049102, guid: c93d43eea125f8245a481d1ed74f53df, type: 3}
+      chance: 50
+      _weight: 0
+    - prop: {fileID: 4721627476769941085, guid: 60b6ca5269e52be48b61408f82cd5d05, type: 3}
+      chance: 20
+      _weight: 0
+    - prop: {fileID: 7040255861971213749, guid: b85560550b44d3245bbd624d2cd03f1c, type: 3}
+      chance: 20
+      _weight: 0
+    - prop: {fileID: 4579349152788052253, guid: be3a96e122ba801439560f128d3d69d2, type: 3}
+      chance: 10
+      _weight: 0
+    chance: 20
+    _weight: 0

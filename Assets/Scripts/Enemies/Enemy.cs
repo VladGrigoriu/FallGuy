@@ -39,6 +39,8 @@ public class Enemy : MonoBehaviour, ITarget
 
     private float difficulty = 1f;
 
+    public Animator animator;
+
 
     public Transform Target
     {
@@ -56,6 +58,7 @@ public class Enemy : MonoBehaviour, ITarget
     private void Awake() 
     {
         rigidBody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
 
@@ -89,8 +92,9 @@ public class Enemy : MonoBehaviour, ITarget
         if(Target != null && TargetVisible == true)
         {
             Vector3 direction = (Target.position - transform.position).normalized;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            rigidBody.rotation = angle;
+            // float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            // rigidBody.rotation = angle;
+           
             moveDirection = direction;
         }
     }
@@ -99,8 +103,23 @@ public class Enemy : MonoBehaviour, ITarget
 
         if(Target != null && TargetVisible == true)
         {
+            animator.SetFloat("Speed", 1f);
             rigidBody.velocity = new Vector2(moveDirection.x, moveDirection.y) * moveSpeed;
+
+            if(moveDirection.x > 0)
+            {
+                transform.rotation = Quaternion.Euler(0, 180, 0);
+            }
+            else
+            {
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
         }
+        else
+        {
+             animator.SetFloat("Speed", 0f);
+        }
+
         
     }
 
@@ -174,9 +193,11 @@ public class Enemy : MonoBehaviour, ITarget
         {
             //DEAD
             //Play dead animation 
-            Destroy(this.gameObject);
+            animator.SetBool("IsDead", true);
+            // Destroy(this.gameObject);
+            Destroy (this.gameObject, animator.GetCurrentAnimatorStateInfo(0).length);
             System.Random rand = new System.Random();
-            if(rand.Next(100) < 1)
+            if(rand.Next(100) < 10)
             {
                 Instantiate(hearth, transform.position, Quaternion.identity);
             }

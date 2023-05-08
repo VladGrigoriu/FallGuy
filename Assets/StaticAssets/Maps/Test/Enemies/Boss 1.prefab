@@ -190,11 +190,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth: 0
-  maxHealth: 1000
-  moveSpeed: 4
+  maxHealth: 500
+  moveSpeed: 3.5
   viewRadius: 15
   detectionCheckDelay: 0.1
-  enemyDamage: 40
+  enemyDamage: 30
   playerLayerMask:
     serializedVersion: 2
     m_Bits: 64

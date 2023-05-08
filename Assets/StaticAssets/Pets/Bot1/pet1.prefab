@@ -140,11 +140,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3215437315fda946b160f145b4a5b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waitingTime: 1.5
+  waitingTime: 0.1
   shootingPoint: {fileID: 5001729018999139070}
   bullet: {fileID: 9042631564878731441, guid: e3b52a8ab6cec9f47809bba0ae8b8828, type: 3}
   player: {fileID: 5001729018371614482}
-  searchRadius: 5
+  searchRadius: 6
   visibilityLayer:
     serializedVersion: 2
     m_Bits: 705

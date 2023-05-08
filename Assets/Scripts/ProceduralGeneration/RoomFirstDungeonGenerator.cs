@@ -40,6 +40,15 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
     public GameObject player;
 
     [SerializeField]
+    public GameObject chestIcon;
+
+    [SerializeField]
+    public GameObject skullIcon;
+
+    [SerializeField]
+    public GameObject campFire;
+
+    [SerializeField]
     public PropObject[] propsToPlace;
 
     [SerializeField]
@@ -83,6 +92,7 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
     void Start()
     {
         RunProceduralGeneration();
+        PlayerPrefs.SetInt("FloorNumber", 1);
     }
 
     public void ClearAll()
@@ -115,7 +125,7 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
         var bossRoomCenter = bossRoom.Key;
         var treasureRoom = roomsDictionary.ElementAt(rand.Next(1, roomsDictionary.Count-1));
         var teasureRoomCenter = treasureRoom.Key;
-        var playerSpawnRoom = SpawnPlayer(spawnRoom.Key);
+        var playerSpawnRoom = SpawnPlayer(spawnRoom.Key, campFire);
         
 
         HashSet<Vector2Int> corridors = ConnectRooms(roomCenters);
@@ -142,8 +152,8 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
 
         ItemPlacementHelper placementHelper = new ItemPlacementHelper();
         placementHelper.ItemPlacementHelperMethod(floor, floorToFill, propsToPlace, spawnRoom.Value, roomsList, bossRoom.Value, treasureRoom.Value, enemiesToPlace);
-        placementHelper.PlaceItemsTreasureRoom(perksToPlace, teasureRoomCenter);
-        placementHelper.PlaceItemsBossRoom(boss, bossRoomCenter);
+        placementHelper.PlaceItemsTreasureRoom(perksToPlace, teasureRoomCenter, chestIcon);
+        placementHelper.PlaceItemsBossRoom(boss, bossRoomCenter, skullIcon);
     }
 
     private HashSet<Vector2Int> CreateSimpleRooms(List<BoundsInt> roomsList)
@@ -241,11 +251,11 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkMapGenerator
 
     }
 
-    private Vector2Int SpawnPlayer(Vector2Int roomPosition)
+    private Vector2Int SpawnPlayer(Vector2Int roomPosition, GameObject campFire)
     {
-        player.transform.position = new Vector3(roomPosition.x, roomPosition.y, 0);
+        player.transform.position = new Vector3(roomPosition.x+1, roomPosition.y, 0);
         // var bot = GameObject.FindGameObjectWithTag("Bot");
-        // Instantiate(bot, new Vector3(roomPosition.x, roomPosition.y, 0), Quaternion.identity);
+        Instantiate(campFire, new Vector3(roomPosition.x, roomPosition.y, 0), Quaternion.identity);
         return roomPosition;
     }
 
